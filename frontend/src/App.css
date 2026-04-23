@@ -1,4 +1,3 @@
-/* Reset */
 * {
   margin: 0;
   padding: 0;
@@ -6,131 +5,134 @@
   font-family: "Segoe UI", sans-serif;
 }
 
-/* Background */
 body {
   min-height: 100vh;
-  background: linear-gradient(135deg, #1e3c72, #2a5298);
+  background: #e0f0ff;
   display: flex;
   justify-content: center;
   align-items: center;
 }
 
-/* Main container */
 .container {
+  background: white;
+  padding: 30px;
+  border-radius: 16px;
   width: 100%;
   max-width: 420px;
-  background: #ffffff;
-  padding: 30px;
-  border-radius: 18px;
-  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+}
+
+h2 {
+  font-size: 22px;
+  color: #1a1a2e;
+  margin-bottom: 20px;
   text-align: center;
 }
 
-/* Heading */
-h2 {
-  color: #222;
-  margin-bottom: 20px;
-  font-weight: 600;
-}
-
-/* Inputs */
 input, select {
   width: 100%;
-  padding: 12px;
-  margin: 12px 0;
-  border-radius: 10px;
-  border: 1px solid #ccc;
-  background: #f8f9fa;
+  padding: 11px 14px;
+  margin-bottom: 12px;
+  border: 1.5px solid #dde3ec;
+  border-radius: 8px;
   font-size: 14px;
-  color: #333;
-  transition: 0.3s;
-}
-
-/* Fix invisible placeholder */
-input::placeholder {
-  color: #777;
-}
-
-/* Focus effect */
-input:focus, select:focus {
-  border-color: #2a5298;
-  background: #fff;
+  background: #f7f9fc;
+  color: #1a1a2e;
   outline: none;
-  box-shadow: 0 0 6px rgba(42, 82, 152, 0.4);
 }
 
-/* Buttons */
+input:focus, select:focus {
+  border-color: #3b82f6;
+  background: white;
+}
+
+input::placeholder {
+  color: #9aa3af;
+}
+
 button {
   width: 100%;
-  padding: 12px;
-  margin-top: 12px;
+  padding: 11px;
   border: none;
-  border-radius: 10px;
-  background: linear-gradient(135deg, #36d1dc, #5b86e5);
-  color: #fff;
+  border-radius: 8px;
+  font-size: 14px;
   font-weight: 600;
   cursor: pointer;
-  transition: 0.3s;
+  background: #3b82f6;
+  color: white;
+  margin-bottom: 12px;
 }
 
 button:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.25);
+  background: #2563eb;
 }
 
-/* Logout button (separate color) */
+/* Logout button — sits right after h2 */
 .container > button {
-  background: linear-gradient(135deg, #ff7e5f, #feb47b);
+  background: #f97316;
 }
 
-/* Form section */
+.container > button:hover {
+  background: #ea6e10;
+}
+
 .form {
-  margin-top: 20px;
+  margin-top: 8px;
 }
 
-/* Cards */
+.link {
+  text-align: center;
+  color: #3b82f6;
+  font-size: 13px;
+  cursor: pointer;
+  margin-top: 4px;
+}
+
+.link:hover {
+  text-decoration: underline;
+}
+
 .card {
-  background: #f1f5f9;
-  margin-top: 15px;
-  padding: 15px;
-  border-radius: 12px;
-  text-align: left;
-  border-left: 5px solid #2a5298;
+  background: #f7f9fc;
+  border-left: 4px solid #3b82f6;
+  border-radius: 10px;
+  padding: 14px 16px;
+  margin-top: 14px;
 }
 
-/* Card text */
 .card h3 {
-  color: #222;
+  font-size: 15px;
+  color: #1a1a2e;
+  margin-bottom: 6px;
 }
 
 .card p {
-  margin: 8px 0;
-  color: #444;
+  font-size: 13px;
+  color: #555e6d;
+  margin-bottom: 10px;
 }
 
-/* Category badge */
 .card span {
-  font-size: 12px;
-  background: #2a5298;
-  color: white;
-  padding: 4px 8px;
-  border-radius: 6px;
+  font-size: 11px;
+  background: #dbeafe;
+  color: #1d4ed8;
+  padding: 3px 8px;
+  border-radius: 5px;
+  font-weight: 500;
 }
 
-/* Delete button */
 .card button {
-  background: #e63946;
+  width: auto;
+  background: #fef2f2;
+  color: #dc2626;
+  border: 1px solid #fecaca;
+  padding: 5px 12px;
+  font-size: 12px;
+  border-radius: 6px;
   margin-top: 10px;
+  display: block;
 }
 
 .card button:hover {
-  background: #c1121f;
-}
-
-/* Link */
-.link {
-  margin-top: 12px;
-  color: #2a5298;
-  cursor: pointer;
-  font-weight: 500;
+  background: #fee2e2;
 }
