@@ -6,12 +6,9 @@ const API = axios.create({
   baseURL: "https://fsd-mse2-shivanshidhyani178-1.onrender.com/api",
 });
 
-// 🔐 Add token automatically
 API.interceptors.request.use((req) => {
   const token = localStorage.getItem("token");
-  if (token) {
-    req.headers.Authorization = `Bearer ${token}`;
-  }
+  if (token) req.headers.Authorization = `Bearer ${token}`;
   return req;
 });
 
@@ -20,18 +17,21 @@ function App() {
   const [form, setForm] = useState({ name: "", email: "", password: "" });
   const [token, setToken] = useState(localStorage.getItem("token"));
   const [grievances, setGrievances] = useState([]);
-  const [gForm, setGForm] = useState({
-    title: "",
-    description: "",
-    category: "Academic",
-  });
+  const [gForm, setGForm] = useState({ title: "", description: "", category: "Academic" });
 
-  // 🔐 Auth submit
+  // ✅ Search state
+  const [searchTitle, setSearchTitle] = useState("");
+  const [searchResult, setSearchResult] = useState(null);
+
+  // ✅ Update state
+  const [editId, setEditId] = useState(null);
+  const [editForm, setEditForm] = useState({ title: "", description: "", category: "Academic", status: "Pending" });
+
+  // Auth
   const handleAuth = async () => {
     try {
       const url = isLogin ? "/login" : "/register";
       const res = await API.post(url, form);
-
       localStorage.setItem("token", res.data.token);
       setToken(res.data.token);
     } catch (err) {
@@ -39,7 +39,7 @@ function App() {
     }
   };
 
-  // 📄 Load grievances
+  // Fetch all
   const fetchGrievances = async () => {
     const res = await API.get("/grievances");
     setGrievances(res.data);
@@ -49,25 +49,56 @@ function App() {
     if (token) fetchGrievances();
   }, [token]);
 
-  // ➕ Add grievance
+  // Add
   const addGrievance = async () => {
     await API.post("/grievances", gForm);
+    setGForm({ title: "", description: "", category: "Academic" });
     fetchGrievances();
   };
 
-  // ❌ Delete
+  // Delete
   const deleteGrievance = async (id) => {
     await API.delete(`/grievances/${id}`);
     fetchGrievances();
   };
 
-  // 🔓 Logout
+  // ✅ Search
+  const handleSearch = async () => {
+    if (!searchTitle.trim()) return alert("Enter a title to search");
+    const res = await API.get(`/grievances/search?title=${searchTitle}`);
+    setSearchResult(res.data);
+  };
+
+  const clearSearch = () => {
+    setSearchTitle("");
+    setSearchResult(null);
+  };
+
+  // ✅ Open edit form
+  const openEdit = (g) => {
+    setEditId(g._id);
+    setEditForm({
+      title: g.title,
+      description: g.description,
+      category: g.category,
+      status: g.status,
+    });
+  };
+
+  // ✅ Submit update
+  const handleUpdate = async () => {
+    await API.put(`/grievances/${editId}`, editForm);
+    setEditId(null);
+    fetchGrievances();
+  };
+
+  // Logout
   const logout = () => {
     localStorage.removeItem("token");
     setToken(null);
   };
 
-  // ================= UI =================
+  // ================= AUTH UI =================
 
   if (!token) {
     return (
@@ -92,9 +123,7 @@ function App() {
           onChange={(e) => setForm({ ...form, password: e.target.value })}
         />
 
-        <button onClick={handleAuth}>
-          {isLogin ? "Login" : "Register"}
-        </button>
+        <button onClick={handleAuth}>{isLogin ? "Login" : "Register"}</button>
 
         <p onClick={() => setIsLogin(!isLogin)} className="link">
           {isLogin ? "Create account" : "Already have account?"}
@@ -103,50 +132,106 @@ function App() {
     );
   }
 
+  // ================= DASHBOARD UI =================
+
+  const displayList = searchResult !== null ? searchResult : grievances;
+
   return (
     <div className="container">
       <h2>Dashboard</h2>
-      <button onClick={logout}>Logout</button>
+      <button className="btn-logout" onClick={logout}>Logout</button>
 
-      {/* Add grievance */}
+      {/* Add Grievance */}
       <div className="form">
         <input
           placeholder="Title"
-          onChange={(e) =>
-            setGForm({ ...gForm, title: e.target.value })
-          }
+          value={gForm.title}
+          onChange={(e) => setGForm({ ...gForm, title: e.target.value })}
         />
-
         <input
           placeholder="Description"
-          onChange={(e) =>
-            setGForm({ ...gForm, description: e.target.value })
-          }
+          value={gForm.description}
+          onChange={(e) => setGForm({ ...gForm, description: e.target.value })}
         />
-
         <select
-          onChange={(e) =>
-            setGForm({ ...gForm, category: e.target.value })
-          }
+          value={gForm.category}
+          onChange={(e) => setGForm({ ...gForm, category: e.target.value })}
         >
           <option>Academic</option>
           <option>Hostel</option>
           <option>Transport</option>
           <option>Other</option>
         </select>
-
         <button onClick={addGrievance}>Submit</button>
       </div>
 
-      {/* List */}
-      {grievances.map((g) => (
+      {/* Search */}
+      <div className="search-bar">
+        <input
+          placeholder="Search by title..."
+          value={searchTitle}
+          onChange={(e) => setSearchTitle(e.target.value)}
+        />
+        <button onClick={handleSearch}>Search</button>
+        {searchResult !== null && (
+          <button className="btn-clear" onClick={clearSearch}>Clear</button>
+        )}
+      </div>
+
+      {/* Update Form — shown when edit is open */}
+      {editId && (
+        <div className="edit-form">
+          <h3>Edit Grievance</h3>
+          <input
+            placeholder="Title"
+            value={editForm.title}
+            onChange={(e) => setEditForm({ ...editForm, title: e.target.value })}
+          />
+          <input
+            placeholder="Description"
+            value={editForm.description}
+            onChange={(e) => setEditForm({ ...editForm, description: e.target.value })}
+          />
+          <select
+            value={editForm.category}
+            onChange={(e) => setEditForm({ ...editForm, category: e.target.value })}
+          >
+            <option>Academic</option>
+            <option>Hostel</option>
+            <option>Transport</option>
+            <option>Other</option>
+          </select>
+          <select
+            value={editForm.status}
+            onChange={(e) => setEditForm({ ...editForm, status: e.target.value })}
+          >
+            <option>Pending</option>
+            <option>Resolved</option>
+          </select>
+          <button onClick={handleUpdate}>Update</button>
+          <button className="btn-cancel" onClick={() => setEditId(null)}>Cancel</button>
+        </div>
+      )}
+
+      {/* Grievance List */}
+      {displayList.length === 0 && (
+        <p className="no-data">No grievances found.</p>
+      )}
+
+      {displayList.map((g) => (
         <div key={g._id} className="card">
           <h3>{g.title}</h3>
           <p>{g.description}</p>
-          <span>{g.category}</span>
-          <button onClick={() => deleteGrievance(g._id)}>
-            Delete
-          </button>
+          <div className="card-footer">
+            <span className="badge">{g.category}</span>
+            <span className={`status ${g.status === "Resolved" ? "resolved" : "pending"}`}>
+              {g.status}
+            </span>
+          </div>
+          <div className="card-actions">
+            <button className="btn-edit" onClick={() => openEdit(g)}>Edit</button>
+            <button className="btn-delete" onClick={() => deleteGrievance(g._id)}>Delete</button>
+          </div>
         </div>
       ))}
     </div>
