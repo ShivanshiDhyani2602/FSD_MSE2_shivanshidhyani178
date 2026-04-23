@@ -3,7 +3,7 @@ import axios from "axios";
 import "./App.css";
 
 const API = axios.create({
-  baseURL: "https://your-backend.onrender.com/api",
+  baseURL: "https://fsd-mse2-shivanshidhyani178-1.onrender.com/api",
 });
 
 // 🔐 Add token automatically
