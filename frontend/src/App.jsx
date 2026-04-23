@@ -18,12 +18,8 @@ function App() {
   const [token, setToken] = useState(localStorage.getItem("token"));
   const [grievances, setGrievances] = useState([]);
   const [gForm, setGForm] = useState({ title: "", description: "", category: "Academic" });
-
-  // ✅ Search state
   const [searchTitle, setSearchTitle] = useState("");
   const [searchResult, setSearchResult] = useState(null);
-
-  // ✅ Update state
   const [editId, setEditId] = useState(null);
   const [editForm, setEditForm] = useState({ title: "", description: "", category: "Academic", status: "Pending" });
 
@@ -39,34 +35,53 @@ function App() {
     }
   };
 
-  // Fetch all
+  // Fetch all grievances
   const fetchGrievances = async () => {
-    const res = await API.get("/grievances");
-    setGrievances(res.data);
+    try {
+      const res = await API.get("/grievances");
+      setGrievances(res.data);
+    } catch (err) {
+      alert(err.response?.data?.message || "Failed to fetch");
+    }
   };
 
   useEffect(() => {
     if (token) fetchGrievances();
   }, [token]);
 
-  // Add
+  // Add grievance
   const addGrievance = async () => {
-    await API.post("/grievances", gForm);
-    setGForm({ title: "", description: "", category: "Academic" });
-    fetchGrievances();
+    try {
+      await API.post("/grievances", gForm);
+      setGForm({ title: "", description: "", category: "Academic" });
+      fetchGrievances();
+    } catch (err) {
+      alert(err.response?.data?.message || "Failed to add");
+    }
   };
 
-  // Delete
+  // Delete grievance
   const deleteGrievance = async (id) => {
-    await API.delete(`/grievances/${id}`);
-    fetchGrievances();
+    try {
+      await API.delete(`/grievances/${id}`);
+      fetchGrievances();
+    } catch (err) {
+      alert(err.response?.data?.message || "Failed to delete");
+    }
   };
 
-  // ✅ Search
+  // Search
   const handleSearch = async () => {
-    if (!searchTitle.trim()) return alert("Enter a title to search");
-    const res = await API.get(`/grievances/search?title=${searchTitle}`);
-    setSearchResult(res.data);
+    if (!searchTitle.trim()) {
+      alert("Enter a title to search");
+      return;
+    }
+    try {
+      const res = await API.get(`/grievances/search?title=${searchTitle}`);
+      setSearchResult(res.data);
+    } catch (err) {
+      alert(err.response?.data?.message || "Search failed");
+    }
   };
 
   const clearSearch = () => {
@@ -74,7 +89,7 @@ function App() {
     setSearchResult(null);
   };
 
-  // ✅ Open edit form
+  // Open edit form
   const openEdit = (g) => {
     setEditId(g._id);
     setEditForm({
@@ -85,11 +100,15 @@ function App() {
     });
   };
 
-  // ✅ Submit update
+  // Submit update
   const handleUpdate = async () => {
-    await API.put(`/grievances/${editId}`, editForm);
-    setEditId(null);
-    fetchGrievances();
+    try {
+      await API.put(`/grievances/${editId}`, editForm);
+      setEditId(null);
+      fetchGrievances();
+    } catch (err) {
+      alert(err.response?.data?.message || "Update failed");
+    }
   };
 
   // Logout
@@ -108,18 +127,21 @@ function App() {
         {!isLogin && (
           <input
             placeholder="Name"
+            value={form.name}
             onChange={(e) => setForm({ ...form, name: e.target.value })}
           />
         )}
 
         <input
           placeholder="Email"
+          value={form.email}
           onChange={(e) => setForm({ ...form, email: e.target.value })}
         />
 
         <input
           type="password"
           placeholder="Password"
+          value={form.password}
           onChange={(e) => setForm({ ...form, password: e.target.value })}
         />
 
@@ -141,7 +163,7 @@ function App() {
       <h2>Dashboard</h2>
       <button className="btn-logout" onClick={logout}>Logout</button>
 
-      {/* Add Grievance */}
+      {/* Add Grievance Form */}
       <div className="form">
         <input
           placeholder="Title"
@@ -165,7 +187,7 @@ function App() {
         <button onClick={addGrievance}>Submit</button>
       </div>
 
-      {/* Search */}
+      {/* Search Bar */}
       <div className="search-bar">
         <input
           placeholder="Search by title..."
@@ -178,7 +200,7 @@ function App() {
         )}
       </div>
 
-      {/* Update Form — shown when edit is open */}
+      {/* Edit Form — shown when edit is open */}
       {editId && (
         <div className="edit-form">
           <h3>Edit Grievance</h3>
@@ -214,26 +236,26 @@ function App() {
       )}
 
       {/* Grievance List */}
-      {displayList.length === 0 && (
+      {displayList.length === 0 ? (
         <p className="no-data">No grievances found.</p>
+      ) : (
+        displayList.map((g) => (
+          <div key={g._id} className="card">
+            <h3>{g.title}</h3>
+            <p>{g.description}</p>
+            <div className="card-footer">
+              <span className="badge">{g.category}</span>
+              <span className={`status ${g.status === "Resolved" ? "resolved" : "pending"}`}>
+                {g.status}
+              </span>
+            </div>
+            <div className="card-actions">
+              <button className="btn-edit" onClick={() => openEdit(g)}>Edit</button>
+              <button className="btn-delete" onClick={() => deleteGrievance(g._id)}>Delete</button>
+            </div>
+          </div>
+        ))
       )}
-
-      {displayList.map((g) => (
-        <div key={g._id} className="card">
-          <h3>{g.title}</h3>
-          <p>{g.description}</p>
-          <div className="card-footer">
-            <span className="badge">{g.category}</span>
-            <span className={`status ${g.status === "Resolved" ? "resolved" : "pending"}`}>
-              {g.status}
-            </span>
-          </div>
-          <div className="card-actions">
-            <button className="btn-edit" onClick={() => openEdit(g)}>Edit</button>
-            <button className="btn-delete" onClick={() => deleteGrievance(g._id)}>Delete</button>
-          </div>
-        </div>
-      ))}
     </div>
   );
 }

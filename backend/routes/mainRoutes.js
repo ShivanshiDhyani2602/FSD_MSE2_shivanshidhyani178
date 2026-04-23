@@ -1,29 +1,24 @@
 const express = require("express");
+const router = express.Router();
+const protect = require("../middleware/authMiddleware");
 const {
-  register,
-  login,
-  addGrievance,
-  getGrievances,
-  getGrievanceById,
-  updateGrievance,
-  deleteGrievance,
-  searchGrievance
+  register, login,
+  addGrievance, getGrievances, getGrievanceById,
+  updateGrievance, deleteGrievance, searchGrievance
 } = require("../controllers/mainController");
 
-const protect = require("../middleware/authMiddleware");
-
-const router = express.Router();
-
-// AUTH
+// Auth
 router.post("/register", register);
 router.post("/login", login);
 
-// GRIEVANCES
+// ✅ Search MUST be before /:id — otherwise Express reads "search" as an id
+router.get("/grievances/search", protect, searchGrievance);
+
+// Grievances
 router.post("/grievances", protect, addGrievance);
 router.get("/grievances", protect, getGrievances);
 router.get("/grievances/:id", protect, getGrievanceById);
 router.put("/grievances/:id", protect, updateGrievance);
 router.delete("/grievances/:id", protect, deleteGrievance);
-router.get("/search", protect, searchGrievance);
 
 module.exports = router;
