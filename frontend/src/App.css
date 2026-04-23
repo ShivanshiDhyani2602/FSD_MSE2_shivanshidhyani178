@@ -1,35 +1,134 @@
-body {
-  font-family: Arial;
-  background: #f4f4f4;
+/* Reset */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Segoe UI", sans-serif;
 }
 
+/* Background */
+body {
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Main container */
 .container {
+  width: 100%;
   max-width: 500px;
-  margin: auto;
-  padding: 20px;
+  background: white;
+  padding: 30px;
+  border-radius: 16px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
   text-align: center;
 }
 
+/* Heading */
+h2 {
+  margin-bottom: 20px;
+  color: #333;
+}
+
+/* Inputs */
 input, select {
   width: 100%;
-  margin: 10px 0;
-  padding: 10px;
-}
-
-button {
-  padding: 10px;
-  margin: 10px;
-  cursor: pointer;
-}
-
-.card {
-  background: white;
-  padding: 10px;
+  padding: 12px;
   margin: 10px 0;
   border-radius: 8px;
+  border: 1px solid #ccc;
+  outline: none;
+  transition: 0.3s;
 }
 
-.link {
-  color: blue;
+input:focus, select:focus {
+  border-color: #667eea;
+  box-shadow: 0 0 5px rgba(102, 126, 234, 0.5);
+}
+
+/* Buttons */
+button {
+  width: 100%;
+  padding: 12px;
+  margin-top: 10px;
+  border: none;
+  border-radius: 8px;
+  background: #667eea;
+  color: white;
+  font-weight: bold;
   cursor: pointer;
+  transition: 0.3s;
+}
+
+button:hover {
+  background: #5a67d8;
+  transform: translateY(-2px);
+}
+
+/* Link */
+.link {
+  margin-top: 10px;
+  color: #667eea;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+/* Grievance form section */
+.form {
+  margin-top: 20px;
+}
+
+/* Cards */
+.card {
+  background: #f9f9f9;
+  margin-top: 15px;
+  padding: 15px;
+  border-radius: 12px;
+  text-align: left;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+  transition: 0.3s;
+}
+
+.card:hover {
+  transform: translateY(-3px);
+}
+
+/* Card content */
+.card h3 {
+  color: #333;
+}
+
+.card p {
+  margin: 8px 0;
+  color: #555;
+}
+
+.card span {
+  font-size: 12px;
+  color: white;
+  background: #667eea;
+  padding: 4px 8px;
+  border-radius: 6px;
+}
+
+/* Delete button */
+.card button {
+  margin-top: 10px;
+  background: #e53e3e;
+}
+
+.card button:hover {
+  background: #c53030;
+}
+
+/* Logout button */
+.container > button {
+  background: #f59e0b;
+  margin-bottom: 10px;
+}
+
+.container > button:hover {
+  background: #d97706;
 }
